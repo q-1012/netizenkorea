@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "717315930072",
+    "project_id": "netizenkorea-ed46d",
+    "storage_bucket": "netizenkorea-ed46d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:717315930072:android:2f662710a6889ff831e4ad",
+        "android_client_info": {
+          "package_name": "com.netizenkorea.android"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcZUhVUUza3wbW8v8hx_eQaPsSu22g2qM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -2,7 +2,7 @@ import { useRef, useEffect, useState } from 'react';
 import Constants from "expo-constants";
 import { WebView } from 'react-native-webview';
 import { StatusBar } from "expo-status-bar";
-import { View, ImageBackground, Image, StyleSheet, Alert, Platform, BackHandler, ToastAndroid } from "react-native";
+import { View, Image, StyleSheet, Alert, Platform, BackHandler, ToastAndroid } from "react-native";
 import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
 import * as Linking from 'expo-linking';

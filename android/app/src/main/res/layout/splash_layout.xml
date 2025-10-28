@@ -11,6 +11,5 @@
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
         android:src="@drawable/splashscreen_logo"
-        android:contentDescription="@string/splash" />
-
+        android:contentDescription="Splash Screen" />
 </FrameLayout>

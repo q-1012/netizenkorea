@@ -1,8 +1,12 @@
 package com.netizenkorea.android
 import expo.modules.splashscreen.SplashScreenManager
 
-import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.view.View
+import android.widget.FrameLayout
+import android.widget.ImageView
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
@@ -11,31 +15,16 @@ import com.facebook.react.defaults.DefaultReactActivityDelegate
 
 import expo.modules.ReactActivityDelegateWrapper
 
-import android.view.View
-import android.view.LayoutInflater
-import android.widget.FrameLayout
-import android.view.ViewTreeObserver
-
 class MainActivity : ReactActivity() {
 
-  private var splashView: View? = null
-  private var splashRemoved = false
+  private lateinit var customSplash: ImageView
+  private var splashShown = true
 
   override fun onCreate(savedInstanceState: Bundle?) {
     // Set the theme to AppTheme BEFORE onCreate to support
     // coloring the background, status bar, and navigation bar.
     // This is required for expo-splash-screen.
     setTheme(R.style.AppTheme);
-
-    //    we add it to the window decor view so it sits above the React root until removed.
-    val inflater = LayoutInflater.from(this)
-    splashView = inflater.inflate(R.layout.splash_layout, null)
-    // add to decorView
-    val decor = window.decorView as FrameLayout
-    decor.addView(splashView)
-
-    // Disable window animation completely
-    window.setWindowAnimations(0)
 
     // @generated begin expo-splashscreen - expo prebuild (DO NOT MODIFY) sync-f3ff59a738c56c9a6119210cb55f0b613eb8b6af
     //SplashScreenManager.registerOnActivity(this)
@@ -46,32 +35,40 @@ class MainActivity : ReactActivity() {
     // Override Activity transition fade controlled by the system
     overridePendingTransition(0, 0)
 
-    // Use global layout or pre-draw to detect first frame.
-    val content = findViewById<View>(android.R.id.content)
+    // 커스텀 스플래시 이미지 생성 및 화면에 추가
+    customSplash = ImageView(this).apply {
+      setImageResource(R.drawable.splash2) // drawable 에 넣어야 함
+      scaleType = ImageView.ScaleType.CENTER_CROP
+      layoutParams = FrameLayout.LayoutParams(
+        FrameLayout.LayoutParams.MATCH_PARENT,
+        FrameLayout.LayoutParams.MATCH_PARENT
+      )
+    }
+
+    val decor = window.decorView as FrameLayout
+    decor.addView(customSplash)
+
+    val content: View = findViewById(android.R.id.content)
     content.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
       override fun onPreDraw(): Boolean {
-        // remove listener at once
-        if (content.viewTreeObserver.isAlive) {
-          content.viewTreeObserver.removeOnPreDrawListener(this)
+        if (!content.viewTreeObserver.isAlive) {
+          return true
         }
-        // remove the splash view on UI thread
-        if (!splashRemoved) {
-          splashRemoved = true
-          runOnUiThread {
+
+        content.viewTreeObserver.removeOnPreDrawListener(this)
+
+        if (splashShown) {
+          splashShown = false
+
+          customSplash.postDelayed({
             try {
-              val decorView = window.decorView as FrameLayout
-              splashView?.let { decorView.removeView(it) }
-              splashView = null
-            } catch (e: Exception) {
-              // ignore
-              splashView = null
-            }
-          }
+              decor.removeView(customSplash)
+            } catch (_: Exception) {}
+          }, 2000)
         }
-        // allow drawing to continue
         return true
       }
-    })    
+    })
   }
 
   /**

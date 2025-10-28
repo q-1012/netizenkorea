@@ -33,10 +33,6 @@ export default function App() {
 
   const defaultUri = 'https://m.nemobile.co.kr/account/signin';
 
-  //스플래시
-  const [showCustomSplash, setShowCustomSplash] = useState(true);
-  const [imageLoaded, setImageLoaded] = useState(false);
-
   //푸시 관련
   const [expoPushToken, setExpoPushToken] = useState('');
   const [notification, setNotification] = useState(false);
@@ -268,27 +264,10 @@ export default function App() {
     }
   }
 
-  // 커스텀 스플래시 이미지 로드 완료 시
-  const handleSplashLoadEnd = async () => {
-    setImageLoaded(true);
-    await sleep(2000); // 반드시 2초 유지
-    setSplashVisible(false); // WebView로 전환
-  };
-
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }}>
         <StatusBar style="dark" />
-
-        {splashVisible ? (
-          <View style={styles.splashContainer}>
-            <Image
-              source={require('./assets/splash2.png')}
-              style={styles.fullScreenImage}
-              onLoadEnd={handleSplashLoadEnd}
-            />
-          </View>
-        ) : (
           <WebView
             ref={webview}
             source={{ uri: navUri }}
@@ -296,26 +275,8 @@ export default function App() {
             onNavigationStateChange={onNavigationStateChange}
             javaScriptEnabled={true}
             style={{ flex: 1 }}
-          />
-        )}
+          />        
       </SafeAreaView>
     </SafeAreaProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  fullScreenImage: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
-  },
-  splashContainer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
-    backgroundColor: '#fff',
-    zIndex: 9999,
-  },
-});

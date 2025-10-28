@@ -11,6 +11,11 @@ import com.facebook.react.defaults.DefaultReactActivityDelegate
 
 import expo.modules.ReactActivityDelegateWrapper
 
+import android.view.View
+import android.view.LayoutInflater
+import android.widget.FrameLayout
+import android.view.ViewTreeObserver
+
 class MainActivity : ReactActivity() {
 
   private var splashView: View? = null

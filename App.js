@@ -35,6 +35,7 @@ export default function App() {
 
   //스플래시
   const [showCustomSplash, setShowCustomSplash] = useState(true);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   //푸시 관련
   const [expoPushToken, setExpoPushToken] = useState('');
@@ -160,11 +161,6 @@ export default function App() {
     //뒤로가기
     BackHandler.addEventListener('hardwareBackPress', onAndroidBackPress);
 
-    // 2초 뒤 커스텀 스플래시 제거
-    const splashTimer = setTimeout(() => {
-      setShowCustomSplash(false);
-    }, 2000);
-
     return () => {
       isMounted = false;
       Notifications.removeNotificationSubscription(notificationListener.current);
@@ -272,23 +268,11 @@ export default function App() {
     }
   }
 
-  // 이미지가 완전히 로드되면 즉시 숨기고 앱 진입
-  const onSplashLoaded = async () => {
-    try {
-      
-      // 첫 프레임 그려질 때까지 대기
-      await new Promise(resolve => {
-        requestAnimationFrame(resolve)
-      })
-
-      // 2초 대기
-      await sleep(2000);
-    } catch (e) {
-      
-    } finally {
-      setAppIsReady(true);
-      enableScreens(true); // 원래 의도대로 필요 시 활성화
-    }
+  // 커스텀 스플래시 이미지 로드 완료 시
+  const handleSplashLoadEnd = async () => {
+    setImageLoaded(true);
+    await sleep(2000); // 반드시 2초 유지
+    setSplashVisible(false); // WebView로 전환
   };
 
   return (
@@ -296,11 +280,12 @@ export default function App() {
       <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }}>
         <StatusBar style="dark" />
 
-        {showCustomSplash ? (
+        {splashVisible ? (
           <View style={styles.splashContainer}>
-            <ImageBackground
+            <Image
               source={require('./assets/splash2.png')}
               style={styles.fullScreenImage}
+              onLoadEnd={handleSplashLoadEnd}
             />
           </View>
         ) : (

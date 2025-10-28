@@ -69,4 +69,9 @@ class MainActivity : ReactActivity() {
       // because it's doing more than [Activity.moveTaskToBack] in fact.
       super.invokeDefaultOnBackPressed()
   }
+
+  override fun onPostResume() {
+      super.onPostResume()
+      overridePendingTransition(0, 0)
+  }
 }

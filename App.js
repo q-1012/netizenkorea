@@ -292,6 +292,12 @@ export default function App() {
   // 이미지가 완전히 로드되면 즉시 숨기고 앱 진입
   const onSplashLoaded = async () => {
     try {
+      
+      // 첫 프레임 그려질 때까지 대기
+      await new Promise(resolve => {
+        requestAnimationFrame(resolve)
+      })
+
       // hideAsync 호출 직후 바로 앱 진입
       await SplashScreen.hideAsync();
 

@@ -12,22 +12,61 @@ import com.facebook.react.defaults.DefaultReactActivityDelegate
 import expo.modules.ReactActivityDelegateWrapper
 
 class MainActivity : ReactActivity() {
+
+  private var splashView: View? = null
+  private var splashRemoved = false
+
   override fun onCreate(savedInstanceState: Bundle?) {
     // Set the theme to AppTheme BEFORE onCreate to support
     // coloring the background, status bar, and navigation bar.
     // This is required for expo-splash-screen.
     setTheme(R.style.AppTheme);
 
+    //    we add it to the window decor view so it sits above the React root until removed.
+    val inflater = LayoutInflater.from(this)
+    splashView = inflater.inflate(R.layout.splash_layout, null)
+    // add to decorView
+    val decor = window.decorView as FrameLayout
+    decor.addView(splashView)
+
     // Disable window animation completely
     window.setWindowAnimations(0)
 
     // @generated begin expo-splashscreen - expo prebuild (DO NOT MODIFY) sync-f3ff59a738c56c9a6119210cb55f0b613eb8b6af
-    SplashScreenManager.registerOnActivity(this)
+    //SplashScreenManager.registerOnActivity(this)
     // @generated end expo-splashscreen
+
     super.onCreate(null)
 
     // Override Activity transition fade controlled by the system
     overridePendingTransition(0, 0)
+
+    // Use global layout or pre-draw to detect first frame.
+    val content = findViewById<View>(android.R.id.content)
+    content.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+      override fun onPreDraw(): Boolean {
+        // remove listener at once
+        if (content.viewTreeObserver.isAlive) {
+          content.viewTreeObserver.removeOnPreDrawListener(this)
+        }
+        // remove the splash view on UI thread
+        if (!splashRemoved) {
+          splashRemoved = true
+          runOnUiThread {
+            try {
+              val decorView = window.decorView as FrameLayout
+              splashView?.let { decorView.removeView(it) }
+              splashView = null
+            } catch (e: Exception) {
+              // ignore
+              splashView = null
+            }
+          }
+        }
+        // allow drawing to continue
+        return true
+      }
+    })    
   }
 
   /**

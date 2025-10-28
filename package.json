@@ -18,6 +18,7 @@
     "expo-doctor": "^1.13.5",
     "expo-linking": "~8.0.8",
     "expo-media-library": "~18.2.0",
+    "expo-modules-core": "^3.0.22",
     "expo-notifications": "~0.32.12",
     "expo-screen-capture": "~8.0.8",
     "expo-splash-screen": "~31.0.10",

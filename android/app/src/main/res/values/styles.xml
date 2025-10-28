@@ -16,6 +16,7 @@
     <item name="android:activityCloseExitAnimation">@null</item>
     <item name="android:taskOpenEnterAnimation">@null</item>
     <item name="android:taskOpenExitAnimation">@null</item>
+    <item name="android:windowBackground">@color/splashscreen_background</item>
   </style>
   <style name="Theme.App.SplashScreen" parent="Theme.SplashScreen">
     <item name="windowSplashScreenBackground">@color/splashscreen_background</item>

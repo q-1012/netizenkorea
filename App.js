@@ -6,7 +6,6 @@ import { View, ImageBackground, Image, StyleSheet, Alert, Platform, BackHandler,
 import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
 import * as Linking from 'expo-linking';
-import * as SplashScreen from "expo-splash-screen";
 import * as MediaLibrary from 'expo-media-library';
 import * as ScreenCapture from 'expo-screen-capture';
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
@@ -26,12 +25,6 @@ const toastWithDurationHandler = () => {
   ToastAndroid.show("'뒤로' 버튼을  한번 더 누르시면 종료됩니다.", ToastAndroid.SHORT);
 };
 
-async function delay_splash() {
-  await SplashScreen.preventAutoHideAsync();
-  await sleep(1500);
-  await SplashScreen.hideAsync();
-}
-
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -41,8 +34,7 @@ export default function App() {
   const defaultUri = 'https://m.nemobile.co.kr/account/signin';
 
   //스플래시
-  const [appIsReady, setAppIsReady] = useState(false);
-  const [showSplasy, setshowSplasy] = useState(false);
+  const [showCustomSplash, setShowCustomSplash] = useState(true);
 
   //푸시 관련
   const [expoPushToken, setExpoPushToken] = useState('');
@@ -86,19 +78,7 @@ export default function App() {
   useEffect(() => {
     let isMounted = true;
 
-    async function prepare() {
-      try {
-        // preventAutoHide는 반드시 await
-        await SplashScreen.preventAutoHideAsync();
-        // 스크린샷 방지 등 네이티브 호출은 여기서 안전하게 실행
-        await ScreenCapture.preventScreenCaptureAsync();
-        // 기타 초기 작업(푸시 토큰 등록 등)은 여기에 둬도 됨
-      } catch (e) {
-        console.warn('SplashScreen.prepare error', e);
-      }
-    }
-
-    prepare();
+    ScreenCapture.preventScreenCaptureAsync();
 
     //기본 uri 설정
     setNavUri('https://m.nemobile.co.kr/account/signin');
@@ -180,7 +160,10 @@ export default function App() {
     //뒤로가기
     BackHandler.addEventListener('hardwareBackPress', onAndroidBackPress);
 
-    //prepare();
+    // 2초 뒤 커스텀 스플래시 제거
+    const splashTimer = setTimeout(() => {
+      setShowCustomSplash(false);
+    }, 2000);
 
     return () => {
       isMounted = false;
@@ -298,64 +281,44 @@ export default function App() {
         requestAnimationFrame(resolve)
       })
 
-      // hideAsync 호출 직후 바로 앱 진입
-      await SplashScreen.hideAsync();
-
       // 2초 대기
       await sleep(2000);
     } catch (e) {
-      console.warn('SplashScreen.hideAsync error', e);
+      
     } finally {
       setAppIsReady(true);
       enableScreens(true); // 원래 의도대로 필요 시 활성화
     }
   };
 
-  if (!appIsReady) {
-    // 앱이 준비되는 동안 표시될 커스텀 스플래시 화면
-    return (
-      <View
-        style={styles.splashContainer}
-      >
-        <ImageBackground
-          source={require('./assets/splash2.png')}
-          style={styles.fullScreenImage}
-          onLoadEnd={onSplashLoaded}
-        />
-      </View>
-    );
-  }
-
   return (
     <SafeAreaProvider>
-      <SafeAreaView
-        edges={["top", "bottom", "left", "right"]}
-        style={{
-          flex: 1,
-          backgroundColor: "#ffffff"
-        }}
-      >
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }}>
         <StatusBar style="dark" />
-        <WebView 
-          ref={webview}
-          source={{ uri: navUri }}
-          onMessage={onMessage}
-          onNavigationStateChange={onNavigationStateChange}
-          setSupportMultipleWindows={false}
-          javaScriptEnabled={true}
-          style={{ flex: 1 }}
-        />
+
+        {showCustomSplash ? (
+          <View style={styles.splashContainer}>
+            <ImageBackground
+              source={require('./assets/splash2.png')}
+              style={styles.fullScreenImage}
+            />
+          </View>
+        ) : (
+          <WebView
+            ref={webview}
+            source={{ uri: navUri }}
+            onMessage={() => {}}
+            onNavigationStateChange={onNavigationStateChange}
+            javaScriptEnabled={true}
+            style={{ flex: 1 }}
+          />
+        )}
       </SafeAreaView>
     </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#ffffff",
-    paddingTop: Constants.statusBarHeight,
-  },
   fullScreenImage: {
     width: '100%',
     height: '100%',
@@ -371,4 +334,3 @@ const styles = StyleSheet.create({
     zIndex: 9999,
   },
 });
-

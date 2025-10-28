@@ -16,16 +16,7 @@
             "targetSdkVersion": 35
           }
         }
-      ],
-      [
-        "expo-splash-screen",
-        {
-          "fade": false,
-          "image": "./assets/icon_1024.png",
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
-        }
-      ]      
+      ]     
     ],
     "name": "네티즌코리아",
     "slug": "netizenkorea",

@@ -6,7 +6,8 @@
     "start": "expo start",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@react-native-community/masked-view": "^0.1.11",
@@ -34,7 +35,8 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
-    "babel-preset-expo": "^54.0.4"
+    "babel-preset-expo": "^54.0.4",
+    "patch-package": "^8.0.0"
   },
   "private": true
 }

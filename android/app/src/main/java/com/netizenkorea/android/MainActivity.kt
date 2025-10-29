@@ -40,7 +40,8 @@ class MainActivity : ReactActivity() {
         WindowManager.LayoutParams.FLAG_FULLSCREEN
     )
 
-    val rootView: ReactRootView = reactRootView
+    // ReactRootView 획득 방식 교체
+    val rootView = findViewById<View>(android.R.id.content) as FrameLayout
 
     rootView.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
         override fun onPreDraw(): Boolean {

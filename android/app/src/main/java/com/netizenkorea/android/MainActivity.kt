@@ -22,63 +22,39 @@ import expo.modules.ReactActivityDelegateWrapper
 
 class MainActivity : ReactActivity() {
 
-  private var splash2ImageView: ImageView? = null
+  private var splashOverlay: ImageView? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    // Set the theme to AppTheme BEFORE onCreate to support
-    // coloring the background, status bar, and navigation bar.
-    // This is required for expo-splash-screen.
-    setTheme(R.style.AppTheme);
-
-    // @generated begin expo-splashscreen - expo prebuild (DO NOT MODIFY) sync-f3ff59a738c56c9a6119210cb55f0b613eb8b6af
-    //SplashScreenManager.registerOnActivity(this)
-    // @generated end expo-splashscreen
-
     super.onCreate(null)
+  }
 
-    window.setFlags(
-        WindowManager.LayoutParams.FLAG_FULLSCREEN,
-        WindowManager.LayoutParams.FLAG_FULLSCREEN
-    )
+  override fun onContentChanged() {
+    super.onContentChanged()
 
-    // ReactRootView 획득 방식 교체
-    val rootView = findViewById<View>(android.R.id.content) as FrameLayout
+    try {
+        val rootView = findViewById<FrameLayout>(android.R.id.content)
+        val context = this
 
-    rootView.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
-        override fun onPreDraw(): Boolean {
-            rootView.viewTreeObserver.removeOnPreDrawListener(this)
-            showSplash2()
-            return true
+        splashOverlay = ImageView(context).apply {
+            setImageResource(R.drawable.splash2) // res/drawable 에 splash2.png
+            scaleType = ImageView.ScaleType.CENTER_CROP
+            layoutParams = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT
+            )
         }
-    })
-  }
 
-  private fun showSplash2() {
-    splash2ImageView = ImageView(this).apply {
-        setImageResource(R.drawable.splash2) // app/src/main/res/drawable 에 위치해야 함
-        scaleType = ImageView.ScaleType.CENTER_CROP // contain 은 CENTER_INSIDE
-        layoutParams = FrameLayout.LayoutParams(
-            FrameLayout.LayoutParams.MATCH_PARENT,
-            FrameLayout.LayoutParams.MATCH_PARENT
-        )
+        rootView.addView(splashOverlay)
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            splashOverlay?.let { overlay ->
+                rootView.removeView(overlay)
+            }
+            splashOverlay = null
+        }, 2000)
+    } catch (e: Exception) {
+        e.printStackTrace()
     }
-
-    addContentView(
-        splash2ImageView,
-        FrameLayout.LayoutParams(
-            FrameLayout.LayoutParams.MATCH_PARENT,
-            FrameLayout.LayoutParams.MATCH_PARENT
-        )
-    )
-
-    Handler(Looper.getMainLooper()).postDelayed({
-        hideSplash2()
-    }, 2000)
-  }
-
-  private fun hideSplash2() {
-    (splash2ImageView?.parent as? FrameLayout)?.removeView(splash2ImageView)
-    splash2ImageView = null
   }
 
   /**

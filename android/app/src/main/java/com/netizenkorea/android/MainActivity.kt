@@ -4,11 +4,15 @@ import expo.modules.splashscreen.SplashScreenManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.View
-import android.widget.FrameLayout
+import android.view.ViewTreeObserver
+import android.view.WindowManager
 import android.widget.ImageView
+import android.widget.FrameLayout
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Build
 
 import com.facebook.react.ReactActivity
+import com.facebook.react.ReactRootView
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
 import com.facebook.react.defaults.DefaultReactActivityDelegate
@@ -17,8 +21,7 @@ import expo.modules.ReactActivityDelegateWrapper
 
 class MainActivity : ReactActivity() {
 
-  private lateinit var customSplash: ImageView
-  private var splashShown = true
+  private var splash2ImageView: ImageView? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
     // Set the theme to AppTheme BEFORE onCreate to support
@@ -32,43 +35,48 @@ class MainActivity : ReactActivity() {
 
     super.onCreate(null)
 
-    // Override Activity transition fade controlled by the system
-    overridePendingTransition(0, 0)
+    window.setFlags(
+        WindowManager.LayoutParams.FLAG_FULLSCREEN,
+        WindowManager.LayoutParams.FLAG_FULLSCREEN
+    )
 
-    // 커스텀 스플래시 이미지 생성 및 화면에 추가
-    customSplash = ImageView(this).apply {
-      setImageResource(R.drawable.splash2) // drawable 에 넣어야 함
-      scaleType = ImageView.ScaleType.CENTER_CROP
-      layoutParams = FrameLayout.LayoutParams(
-        FrameLayout.LayoutParams.MATCH_PARENT,
-        FrameLayout.LayoutParams.MATCH_PARENT
-      )
+    val rootView: ReactRootView = reactRootView
+
+    rootView.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+        override fun onPreDraw(): Boolean {
+            rootView.viewTreeObserver.removeOnPreDrawListener(this)
+            showSplash2()
+            return true
+        }
+    })
+  }
+
+  private fun showSplash2() {
+    splash2ImageView = ImageView(this).apply {
+        setImageResource(R.drawable.splash2) // app/src/main/res/drawable 에 위치해야 함
+        scaleType = ImageView.ScaleType.CENTER_CROP // contain 은 CENTER_INSIDE
+        layoutParams = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.MATCH_PARENT
+        )
     }
 
-    val decor = window.decorView as FrameLayout
-    decor.addView(customSplash)
+    addContentView(
+        splash2ImageView,
+        FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.MATCH_PARENT
+        )
+    )
 
-    val content: View = findViewById(android.R.id.content)
-    content.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
-      override fun onPreDraw(): Boolean {
-        if (!content.viewTreeObserver.isAlive) {
-          return true
-        }
+    Handler(Looper.getMainLooper()).postDelayed({
+        hideSplash2()
+    }, 2000)
+  }
 
-        content.viewTreeObserver.removeOnPreDrawListener(this)
-
-        if (splashShown) {
-          splashShown = false
-
-          customSplash.postDelayed({
-            try {
-              decor.removeView(customSplash)
-            } catch (_: Exception) {}
-          }, 2000)
-        }
-        return true
-      }
-    })
+  private fun hideSplash2() {
+    (splash2ImageView?.parent as? FrameLayout)?.removeView(splash2ImageView)
+    splash2ImageView = null
   }
 
   /**

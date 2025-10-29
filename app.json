@@ -62,12 +62,12 @@
     },
     "extra": {
       "eas": {
-        "projectId": "aa9ac9fe-aba5-456d-aa54-00f518c31f86"
+        "projectId": "cf3e4bec-2d78-47b9-8391-8a69c928bd44"
       }
     },
     "runtimeVersion": "1.0.0",
     "updates": {
-      "url": "https://u.expo.dev/aa9ac9fe-aba5-456d-aa54-00f518c31f86"
+      "url": "https://u.expo.dev/cf3e4bec-2d78-47b9-8391-8a69c928bd44"
     }
   }
 }

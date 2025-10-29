@@ -16,7 +16,16 @@
             "targetSdkVersion": 35
           }
         }
-      ]     
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "fade": false,
+          "image": "./assets/icon_1024.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ]      
     ],
     "name": "네티즌코리아",
     "slug": "netizenkorea",
@@ -51,7 +60,11 @@
       ],
       "package": "com.netizenkorea.android",
       "googleServicesFile": "./google-services.json",
-      "versionCode": 8
+      "versionCode": 8,
+      "gradleCommand": ":app:bundleRelease",
+      "env": {
+        "EXPO_ARM64_PAGE_SIZE_16K": "true"
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"

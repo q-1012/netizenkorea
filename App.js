@@ -1,12 +1,10 @@
 import { useRef, useEffect, useState } from 'react';
-import Constants from "expo-constants";
 import { WebView } from 'react-native-webview';
 import { StatusBar } from "expo-status-bar";
-import { View, Image, StyleSheet, Alert, Platform, BackHandler, ToastAndroid } from "react-native";
+import { Alert, Platform, BackHandler, ToastAndroid } from "react-native";
 import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
 import * as Linking from 'expo-linking';
-import * as MediaLibrary from 'expo-media-library';
 import * as ScreenCapture from 'expo-screen-capture';
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 import { enableScreens } from 'react-native-screens';
@@ -39,7 +37,6 @@ export default function App() {
   const notificationListener = useRef();
   const responseListener = useRef();
   const lastNotificationResponse = Notifications.useLastNotificationResponse();
-  const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
   const [navUri, setNavUri] = useState('');
 
   //뒤로가기 처리
@@ -144,9 +141,6 @@ export default function App() {
       }
     }
 
-    //미디어 라이브러리 권한
-    requestMediaLibraryPermissions();
-
     //카메라 권한
     //getCameraPermission();
 
@@ -160,16 +154,6 @@ export default function App() {
       BackHandler.removeEventListener('hardwareBackPress', onAndroidBackPress);
     };
   }, []);
-
-  const requestMediaLibraryPermissions = async () => {
-    const { status } = await MediaLibrary.requestPermissionsAsync();
-
-    if (status !== 'granted') {
-      //console.log('Media library permission denied');
-      //Linking.openSettings();
-      return;
-    }
-  };
 
   const getCameraPermission = async () => {
     const { status } = await Camera.requestCameraPermissionsAsync();
@@ -270,6 +254,10 @@ export default function App() {
             onMessage={onMessage}
             setSupportMultipleWindows={false}
             javaScriptEnabled={true}
+            domStorageEnabled={true}
+            allowsFileAccess={true}
+            allowFileAccessFromFileURLs={true}
+            allowUniversalAccessFromFileURLs={true}
             style={{ flex: 1 }}
           />        
       </SafeAreaView>

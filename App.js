@@ -101,7 +101,7 @@ export default function App() {
             console.error('js called: ', 'document.location.href="'+link+'";');
             
           } else {
-            let enLink = encodeURIComponenet(link);
+            let enLink = encodeURIComponent(link);
             console.error('fetch called: ', 'https://m.nemobile.co.kr/common/pushLinkMove?link='+enLink+'&os='+Platform.OS);
             fetch('https://m.nemobile.co.kr/common/pushLinkMove?link='+enLink+'&os='+Platform.OS, {
               method: 'POST',
@@ -267,8 +267,8 @@ export default function App() {
           <WebView
             ref={webview}
             source={{ uri: navUri }}
-            onMessage={() => {}}
-            onNavigationStateChange={onNavigationStateChange}
+            onMessage={onMessage}
+            setSupportMultipleWindows={false}
             javaScriptEnabled={true}
             style={{ flex: 1 }}
           />        

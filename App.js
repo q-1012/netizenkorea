@@ -41,14 +41,10 @@ export default function App() {
   const lastNotificationResponse = Notifications.useLastNotificationResponse();
   const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
   const [navUri, setNavUri] = useState('');
-  const [mainUrl, setMainUrl] = useState(''); //url을 담을 변수
-
-  const onNavigationStateChange = (navState) => {
-    setMainUrl(navState.url);  
-  }
 
   //뒤로가기 처리
   const webview = useRef(null);
+  const mainUrl = '/';
   let time = 0;
   const onAndroidBackPress = () => {
     if (!webview.current) {
@@ -66,7 +62,7 @@ export default function App() {
         return false;
       }
     } else {
-      webview.current.goBack();
+      //webview.current.goBack();
       return true;
     }
     return true;
